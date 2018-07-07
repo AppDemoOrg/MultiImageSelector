@@ -1,6 +1,7 @@
 package com.abt.mis;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -21,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.abt.mis.widget.MySurfaceView;
 import com.abt.multi_image_selector.MultiImageSelector;
 
 import java.util.ArrayList;
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private RadioGroup mChoiceMode, mShowCamera;
     private EditText mRequestNum;
     private ImageView mImageView;
+    private MySurfaceView mSurfaceView;
     private ArrayList<String> mSelectPath;
 
     @Override
@@ -47,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         mShowCamera = (RadioGroup) findViewById(R.id.show_camera);
         mRequestNum = (EditText) findViewById(R.id.request_num);
         mImageView = (ImageView) findViewById(R.id.img);
+        mSurfaceView = (MySurfaceView) findViewById(R.id.surface);
 
         mChoiceMode.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -138,7 +142,8 @@ public class MainActivity extends AppCompatActivity {
         if(requestCode == REQUEST_IMAGE){
             if(resultCode == RESULT_OK){
                 mSelectPath = data.getStringArrayListExtra(MultiImageSelector.EXTRA_RESULT);
-                showImage(mSelectPath.get(0));
+                //showImage(mSelectPath.get(0));
+                showSurface(mSelectPath.get(0));
                 StringBuilder sb = new StringBuilder();
                 for(String p: mSelectPath){
                     sb.append(p);
@@ -147,6 +152,11 @@ public class MainActivity extends AppCompatActivity {
                 mResultText.setText(sb.toString());
             }
         }
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private void showSurface(String path) {
+        mSurfaceView.open(path);
     }
 
     private void showImage(String path) {
