@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -51,6 +52,9 @@ public class MainActivity extends AppCompatActivity {
         mRequestNum = (EditText) findViewById(R.id.request_num);
         mImageView = (ImageView) findViewById(R.id.img);
         mSurfaceView = (MySurfaceView) findViewById(R.id.surface);
+        //mImageView.setImageURI(Uri.parse("file:///assets/ic_launcher.png"));
+        mImageView.setImageURI(Uri.parse("https://www.baidu.com/img/bd_logo1.png"));
+        //mImageView.setImageIcon();
 
         mChoiceMode.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -178,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        // noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }

@@ -107,14 +107,15 @@
                 android:id="@+id/surface"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
-                android:background="#787878" />
+                android:background="#787878"
+                android:visibility="gone"/>
 
             <ImageView
                 android:id="@+id/img"
                 android:layout_width="match_parent"
                 android:layout_height="200dp"
                 android:background="#787878"
-                android:visibility="gone" />
+                android:visibility="visible" />
         </LinearLayout>
 
     </ScrollView>
