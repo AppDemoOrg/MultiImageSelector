@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,6 +14,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,6 +30,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_IMAGE = 2;
     protected static final int REQUEST_STORAGE_READ_ACCESS_PERMISSION = 101;
     protected static final int REQUEST_STORAGE_WRITE_ACCESS_PERMISSION = 102;
@@ -52,16 +53,13 @@ public class MainActivity extends AppCompatActivity {
         mRequestNum = (EditText) findViewById(R.id.request_num);
         mImageView = (ImageView) findViewById(R.id.img);
         mSurfaceView = (MySurfaceView) findViewById(R.id.surface);
-        //mImageView.setImageURI(Uri.parse("file:///assets/ic_launcher.png"));
-        mImageView.setImageURI(Uri.parse("https://www.baidu.com/img/bd_logo1.png"));
-        //mImageView.setImageIcon();
 
         mChoiceMode.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
-                if(checkedId == R.id.multi){
+                if (checkedId == R.id.multi) {
                     mRequestNum.setEnabled(true);
-                }else{
+                } else {
                     mRequestNum.setEnabled(false);
                     mRequestNum.setText("");
                 }
@@ -87,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
             requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE,
                     getString(R.string.mis_permission_rationale),
                     REQUEST_STORAGE_READ_ACCESS_PERMISSION);
-        }else {
+        } else {
             boolean showCamera = mShowCamera.getCheckedRadioButtonId() == R.id.show;
             int maxNum = 9;
 
@@ -111,8 +109,8 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void requestPermission(final String permission, String rationale, final int requestCode){
-        if(ActivityCompat.shouldShowRequestPermissionRationale(this, permission)){
+    private void requestPermission(final String permission, String rationale, final int requestCode) {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
             new AlertDialog.Builder(this)
                     .setTitle(R.string.mis_permission_dialog_title)
                     .setMessage(rationale)
@@ -124,15 +122,15 @@ public class MainActivity extends AppCompatActivity {
                     })
                     .setNegativeButton(R.string.mis_permission_dialog_cancel, null)
                     .create().show();
-        }else{
+        } else {
             ActivityCompat.requestPermissions(this, new String[]{permission}, requestCode);
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if(requestCode == REQUEST_STORAGE_READ_ACCESS_PERMISSION){
-            if(grantResults[0] == PackageManager.PERMISSION_GRANTED){
+        if (requestCode == REQUEST_STORAGE_READ_ACCESS_PERMISSION) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 pickImage();
             }
         } else {
@@ -143,13 +141,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == REQUEST_IMAGE){
-            if(resultCode == RESULT_OK){
+        if (requestCode == REQUEST_IMAGE) {
+            if (resultCode == RESULT_OK) {
                 mSelectPath = data.getStringArrayListExtra(MultiImageSelector.EXTRA_RESULT);
-                //showImage(mSelectPath.get(0));
-                showSurface(mSelectPath.get(0));
+                showImage(mSelectPath.get(0));
+                //showSurface(mSelectPath.get(0));
                 StringBuilder sb = new StringBuilder();
-                for(String p: mSelectPath){
+                for (String p : mSelectPath) {
                     sb.append(p);
                     sb.append("\n");
                 }
@@ -164,7 +162,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showImage(String path) {
-        Bitmap bitmap = BitmapFactory.decodeFile(path);
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inPreferredConfig = Bitmap.Config.RGB_565;
+        Bitmap bitmap = BitmapFactory.decodeFile(path, options);
+        Log.d(TAG, "bitmap.getByteCount()/(1024*1024) = "+bitmap.getByteCount()/(1024*1024));
         mImageView.setImageBitmap(bitmap);
     }
 
